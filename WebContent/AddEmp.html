@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<!--设置浏览器的布局视口，只在移动端浏览器起作用-->
+		<meta name="viewport" content="width=width-device,initial-scale=1,user-scalable=no" />
+		<title></title>
+		<!--引入bootstrap的核心css-->
+		<link rel="stylesheet" href="js/Bootstrap/css/bootstrap.css" />
+		<!--引入日历css-->
+		<link rel="stylesheet" href="js/datetimepicker/jquery.datetimepicker.css" />
+		<!--判断如果是IE9以下，引入兼容h5标签的js文件，注意空格的位置-->
+		<!--[if lt IE 9]>
+		<script src="js/bootstrap/js/html5shiv.min.js"></script>
+		<script src="js/bootstrap/js/respond.min.js"></script>		
+		<![end if] -->
+	</head>
+
+	<body>
+		<div class="container">
+
+			<ol class="breadcrumb">
+				<li>
+					<a href="#">人力资源管理系统</a>
+				</li>
+				<li>
+					<a href="#">员工管理</a>
+				</li>
+				<li>增加新员工</li>
+			</ol>
+
+			<h2 class="page-header">增加新员工</h2>
+
+			<form id="form1" class="form-horizontal">
+				<div class="form-group">
+					<label for="" class="col-md-2">员工名称</label>
+					<div class="col-md-10">
+						<input id="empName" name="empName" type="text" placeholder="请输入员工姓名" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">登录账号</label>
+					<div class="col-md-10">
+						<input id="empLoginName" name="empLoginName" type="text" placeholder="请输入登录账号" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">初始密码</label>
+					<div class="col-md-10">
+						<input id="empPwd" name="empPwd" type="password" placeholder="请输入初始密码" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">确认密码</label>
+					<div class="col-md-10">
+						<input id="empPwd2" name="empPwd2" type="password" placeholder="再次输入密码" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">电子邮件</label>
+					<div class="col-md-10">
+						<input id="empEmail" name="empEmail" type="text" placeholder="请输入员工邮箱" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">电话号码</label>
+					<div class="col-md-10">
+						<input id="empPhone" name="empPhone" type="text" placeholder="请输入员工电话" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">员工工资</label>
+					<div class="col-md-10">
+						<input id="empSalary" name="empSalary" type="text" placeholder="请输入员工工资" class="form-control" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">入职日期</label>
+					<div class="col-md-10">
+						<input id="empHiredate" name="empHiredate" type="text" placeholder="情选择入职日期" class="form-control" readonly/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">部门</label>
+					<div class="col-md-10">
+						<select id="deptId" name="deptId" class="form-control">
+							<option value="">请选择部门</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="col-md-2">职务</label>
+					<div class="col-md-10">
+						<select id="jobId" name="jobId" class="form-control">
+							<option value="">请选择职务</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group" class="form-control">
+					<label for="" class="col-md-2">员工简介</label>
+					<div class="col-md-10">
+						<textarea name="empInfo" rows="" cols="" placeholder="请输入员工备注介绍" class="form-control"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-10 col-md-offset-2">
+						<input type="button" value="增加员工" class="btn btn-success" id="addBtn" />
+						<input type="button" value="取消" class="btn btn-danger" onclick="history.back();" />
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!--引入jquery-->
+		<script src="js/jquery.js"></script>
+		<!-- 引入全局js -->
+		<script src="js/global.js"></script>
+		<!--引入bootstrap的js功能-->
+		<script src="js/Bootstrap/js/bootstrap.js"></script>
+		<!--引入layer插件-->
+		<script src="js/layer/layer.js"></script>
+		<!--引入日历js-->
+		<script src="js/datetimepicker/jquery.datetimepicker.js"></script>
+		<script>
+			$(function() {
+				// 给文本框绑定日历控件
+				$('#empHiredate').datetimepicker({
+					lang: 'ch',
+					format: 'Y-m-d',
+					formatDate: 'Y-m-d',
+					timepicker: false
+				});
+
+				//动态生成部门列表
+				var deptId = $('#deptId');
+
+				//发出ajax请求调用后端代码
+				$.ajax({
+						url: baseUrl + '/QueryDeptJsonServlet',
+						type: 'GET',
+						dataType: 'json',
+					})
+					.done(function(data) {
+						//遍历json数组
+						$.each(data, function(index, el) {
+							var opt = '<option value = "' + el.deptId + '">' + el.deptName + '</option>';
+							deptId.append(opt);
+						});
+
+					})
+					.fail(function(xhr, errorStatus, errorText) {
+						layer.msg('请求失败，' + errorText + ',' + xhr.status);
+					});
+
+				//动态生成职务列表
+				var jobId = $('#jobId');
+
+				//发出ajax请求调用后端代码
+				$.ajax({
+						url: baseUrl + '/QueryJobServlet',
+						type: 'GET',
+						dataType: 'json',
+					})
+					.done(function(data) {
+						//遍历json数组
+						$.each(data, function(index, el) {
+							var opt = '<option value = "' + el.jobId + '">' + el.jobName + '</option>';
+							jobId.append(opt);
+						});
+
+					})
+					.fail(function(xhr, errorStatus, errorText) {
+						layer.msg('请求失败，' + errorText + ',' + xhr.status);
+					});
+
+				/*
+				 * 表单验证函数
+				 */
+				function checkFrom() {
+					//姓名
+					var empName = $('#empName');
+					if(empName.val() == '' || empName.val().length > 10) {
+						layer.msg('员工姓名不能为空且最多为十字符')
+						return false;
+					}
+					//登录名(不能为空最多为10字符)
+					var empLoginName = $('#empLoginName');
+
+					if(empLoginName.val() == '' || empLoginName.val().length > 10) {
+						layer.msg(' 登录名禁止为空，且不能大于10字符');
+						empLoginName.focus();
+						return false;
+					}
+
+					var params = {
+						empLoginName: empLoginName.val()
+					}
+
+					var checkLoginName = true;
+
+					$.ajax({
+							url: baseUrl + '/CheckLoginNameServlet',
+							type: 'POST',
+							dataType: 'html',
+							data: params,
+							async: false //同步执行
+						})
+						.done(function(data) {
+							if(data == 'no') {
+								layer.msg('该昵称已被占用！');
+								empLoginName.focus();
+								checkLoginName = false; //设置标志位false
+							}
+						})
+						.fail(function(xhr, errorStatus, errorText) {
+							layer.msg('请求失败，' + errorText + ',' + xhr.status);
+						});
+
+					if(!checkLoginName)
+						return false;
+
+					//密码必须6-8位 
+					var empPwd = $('#empPwd');
+					var ruler = /^\w{6,8}$/;
+					if(!ruler.test(empPwd.val())) {
+						layer.msg('密码格式不正确');
+						empPwd.focus();
+						return false;
+					}
+					//密码一致
+					var empPwd2 = $('#empPwd2');
+					if(empPwd.val()!=empPwd2.val()){
+						layer.msg('输入密码不一致');
+						empPwd2.focus();
+						return false;
+					}
+					//邮箱
+					var empEmail = $('#empEmail');
+					ruler = /^\w+@[A-Za-z]+\.com$/;
+					
+					if(!ruler.test(empEmail.val())){
+						layer.msg('邮箱格式不合法');
+						empEmail.focus();
+						return false;
+					}
+					//电话号码
+					var empPhone = $('#empPhone');
+					ruler = /^1[3-8]\d{9}$/;
+					if(!ruler.test(empPhone.val())){
+						layer.msg('手机格式不合法');
+						empPhone.focus();
+						return false;
+					}
+					//工资最多最多六位整数，两位小时
+					var empSalary = $('#empSalary');
+					ruler = /^[1-9]\d{0,5}(\.\d{1,2})?$/
+					if(!ruler.test(empSalary.val())) {
+						layer.msg('工资格式不合法');
+						empSalary.focus();
+						return false;
+					}
+
+					//入职日期不能为空
+					var empHiredate = $('#empHiredate');
+					if(empHiredate.val() == '') {
+						layer.msg('入职日期不可为空 且在100字符之内')
+						empHiredate.focus();
+						return false;
+					}
+
+					//必须选择部门
+					var deptId = $('#deptId');
+					if(deptId.val() == '') {
+						layer.msg('请选择你的部门')
+						deptId.focus();
+						return false;
+					}
+
+					var jobId = $('#jobId');
+					if(jobId.val() == '') {
+						layer.msg('请选择你的职务')
+						jobId.focus();
+						return false;
+					}
+
+					//工资不能超过职务范围
+					var checkSal = true;
+
+					var params = {
+						jobId: jobId.val()
+					}
+
+					$.ajax({
+							url: baseUrl + '/GetJobServlet',
+							type: 'POST',
+							dataType: 'json',
+							data: params,
+							async: false //同步执行
+						})
+						.done(function(data) {
+							if(parseFloat(empSalary.val()) < data.jobMinSal ||
+								parseFloat(empSalary.val()) > data.jobMaxSal) {
+								layer.msg('工资必须介于职务工资' + data.jobMinSal + '~' + data.jobMaxSal + '之间');
+								checkSal = false; //设置标志位false
+							}
+						})
+						.fail(function(xhr, errorStatus, errorText) {
+							layer.msg('请求失败，' + errorText + ',' + xhr.status);
+						});
+					if(!checkSal) {
+						return false;
+					}
+
+					return true;
+				}
+
+				//登录名失去焦点验证
+				$('#empLoginName').change(function() {
+
+					if(this.value == '') {
+						return;
+					}
+					//加载层
+					layer.msg('正在检查用户名', {
+						icon: 16
+					});
+
+					var params = {
+						empLoginName: this.value
+					}
+
+					$.ajax({
+							url: baseUrl + '/CheckLoginNameServlet',
+							type: 'POST',
+							dataType: 'html',
+							data: params
+						})
+						.done(function(data) {
+							if(data == 'yes') {
+								layer.msg('此登录名可以使用');
+							} else {
+								layer.msg('该昵称已被占用！');
+							}
+						})
+						.fail(function(xhr, errorStatus, errorText) {
+							layer.msg('请求失败，' + errorText + ',' + xhr.status);
+						});
+
+				});
+
+				//单机增加按钮发宋ajax请求，调用servlert
+				$('#addBtn').click(function() {
+					//调用表单验证
+					if(!checkFrom()) {
+						return;
+					}
+
+					var params = $('#form1').serialize();
+					console.log(params);
+
+					//发出ajax请求调用后端代码
+					$.ajax({
+							url: baseUrl + '/AddEmpServlet',
+							type: 'POST',
+							dataType: 'html',
+							data: params
+						})
+						.done(function(data) {
+							layer.msg('增加员工成功！');
+							
+							setTimeout(function() {
+								location.href = 'QueryEmp.html';
+							},500)
+							
+						})
+						.fail(function(xhr, errorStatus, errorText) {
+							layer.msg('请求失败，' + errorText + ',' + xhr.status);
+						});
+
+				});
+			});
+		</script>
+	</body>
+
+</html>

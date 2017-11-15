@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!--设置浏览器的布局视口，只在移动端浏览器起作用-->
+		<meta name="viewport" content="width=width-device,initial-scale=1,user-scalable=no" />
+		<title></title>
+		<!--引入bootstrap的核心css-->
+		<link rel="stylesheet" href="js/Bootstrap/css/bootstrap.css" />
+		
+		<!--判断如果是IE9以下，引入兼容h5标签的js文件，注意空格的位置-->		
+		<!--[if lt IE 9]>
+		<script src="js/bootstrap/js/html5shiv.min.js"></script>
+		<script src="js/bootstrap/js/respond.min.js"></script>		
+		<![end if] -->
+	</head>
+	<body>
+		<div class="container">
+			<ol class="breadcrumb">
+				<li><a href="#">人力资源管理系统</a></li>
+				<li><a href="#">数据分析</a></li>
+				<li>数据分析图表</li>
+			</ol>
+			
+			<h2 class="page-header">数据统计分析</h2>
+			
+			<div class="row">
+				<!--renshu-->
+				<div id="empCount" class="col-sm-12" style="height: 300px;">
+					
+						
+				</div>
+				<!--部门平均工资-->
+				<div id="empAvgSal" class="col-sm-12" style="height: 300px;">
+					
+				</div>
+				<!--部门最低最高工资-->
+				<div id="empMaxAndMinSal" class="col-sm-12" style="height: 300px;">
+					
+				</div>
+			</div>
+		</div>
+		
+		<!--引入jquery-->
+		<script src="js/jquery.js"></script>
+		<!--引入全局公共js-->
+		<script src="js/global.js"></script>
+		<!--引入bootstrap的js功能-->
+		<script src="js/Bootstrap/js/bootstrap.js"></script>
+		<!--引入layer插件-->
+		<script src="js/layer/layer.js"></script>
+		<!--引入Echart-->
+		<script src="echarts/echarts.min.js"></script>
+		<script type="text/javascript">
+			// 统计部门的员工人数
+			var myChart = echarts.init(document.getElementById('empCount'));
+			$.getJSON(baseUrl + '/QueryEmpCountServlet',function(data) {
+				var arrX = [];
+				var arrY = [];
+				var i = 0;
+				$.each(data, function(index,item) {
+					arrX[i] = item.deptName;
+					arrY[i] = item.counts;
+					i ++;
+					console.log(arrX);
+					console.log(arrY);
+				});
+				
+				// 指定图表的配置项和数据
+				var option = {
+				    // 标题
+				    title: {
+				        text: '部门人数统计'
+				    },
+				    // 工具箱
+				    toolbox: {
+				        show: true,
+				        feature: {
+				            saveAsImage: {
+				                show: true
+				            }
+				        }
+				    },
+				    // 图例
+				    legend: {
+				        data: ['人数']
+				    },
+				    // x轴
+				    xAxis: {
+//				        data: ['财务部','开发部','行政部']
+				        data: arrX
+				    },
+				    yAxis: {},
+				    // 数据
+				    series: [{
+				        name: '人数',
+				        type: 'bar',
+//				        data: [10,5,20,10,10,10]
+						data: arrY
+				    }]
+				};
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+			});
+			
+			
+			// 统计部门的平均工资
+			var myChart2 = echarts.init(document.getElementById('empAvgSal'));
+			$.getJSON(baseUrl + '/QueryEmpAvgSal',function(data) {
+				var arrX = [];
+				var arrY = [];
+				var i = 0;
+				$.each(data, function(index,item) {
+					arrX[i] = item.deptName;
+					arrY[i] = item.avgSal;
+					i ++;
+					console.log(arrX);
+					console.log(arrY);
+				});
+				
+				// 指定图表的配置项和数据
+				var option = {
+				    // 标题
+				    title: {
+				        text: '部门平均工资统计'
+				    },
+				    // 工具箱
+				    toolbox: {
+				        show: true,
+				        feature: {
+				            saveAsImage: {
+				                show: true
+				            }
+				        }
+				    },
+				    // 图例
+				    legend: {
+				        data: ['平均工资']
+				    },
+				    // x轴
+				    xAxis: {
+//				        data: ['财务部','开发部','行政部']
+				        data: arrX
+				    },
+				    yAxis: {},
+				    // 数据
+				    series: [{
+				        name: '平均工资',
+				        type: 'bar',
+//				        data: [10,5,20,10,10,10]
+						data: arrY
+				    }]
+				};
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart2.setOption(option);
+			});
+			
+			// 统计部门的平均工资
+			var myChart3 = echarts.init(document.getElementById('empMaxAndMinSal'));
+			$.getJSON(baseUrl + '/QueryEmpMaxAndMinSal',function(data) {
+				var arrX = [];
+				var arrMax = [];
+				var arrMin = [];
+				var i = 0;
+				$.each(data, function(index,item) {
+					arrX[i] = item.deptName;
+					arrMax[i] = item.MaxSal;
+					arrMin[i] = item.MinSal;
+					i ++;
+				});
+				
+				// 指定图表的配置项和数据
+				var option = {
+				    // 标题
+				    title: {
+				        text: '部门平均工资统计'
+				    },
+				    // 工具箱
+				    toolbox: {
+				        show: true,
+				        feature: {
+				            saveAsImage: {
+				                show: true
+				            }
+				        }
+				    },
+				    // 图例
+				    legend: {
+				        data: ['最高工资','最低工资']
+				    },
+				    // x轴
+				    xAxis: {
+//				        data: ['财务部','开发部','行政部']
+				        data: arrX
+				    },
+				    yAxis: {},
+				    // 数据
+				    series: [{
+				        name: '最高工资',
+				        type: 'bar',
+//				        data: [10,5,20,10,10,10]
+						data: arrMax,
+						markPoint: {
+			            data: [
+			                {type: 'max', name: '最大值'},
+			                {type: 'min', name: '最小值',symbol:'arrow'}
+			            ]
+				        },
+				        // 额外的标记线
+				        markLine: {
+				            data: [
+				                {type: 'average', name: '平均值'}
+				            ]
+				        }
+				    },
+				    {
+				        name: '最低工资',
+				        type: 'bar',
+//				        data: [10,5,20,10,10,10]
+						data: arrMin
+				    }]
+				};
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart3.setOption(option);
+			});
+			
+		</script>
+	</body>
+</html>
